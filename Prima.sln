@@ -1,0 +1,83 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace PrimAlgorithm
+{
+    class Rebro
+    {
+        public int Start;
+        public int End;
+        public int Weight;
+        public int Number;
+        public Rebro(int start, int end, int weight, int number)
+        {
+            Start = start;
+            End = end;
+            Weight = weight;
+            Number = number;
+        }
+    }
+
+    internal class Program
+    {
+        static List<Rebro> edges = new List<Rebro>()
+        {   new Rebro(2, 3, 1, 1), new  Rebro(1,3,13,2),
+            new Rebro(3,4,7,3), new Rebro(3,7,4,4), new Rebro(1,4,7,5), new Rebro(1,6,2,6),
+            new Rebro(0,1,3,7), new Rebro(0,6,4,8), new Rebro(4,6,9,9), new Rebro(5,6,5,10),
+            new Rebro(3,5,6,11), new Rebro(5,7,11,12),
+        };
+
+        static HashSet<int> visited = new HashSet<int>();  
+        static List<Rebro> mst = new List<Rebro>();        
+
+        static void Main(string[] args)
+        {
+            int totalNodes = edges.Select(e => e.Start).Union(edges.Select(e => e.End)).Distinct().Count();
+            int sum = 0;
+            Prima(1, totalNodes);  
+
+            foreach (var edge in mst)
+            {
+                sum += edge.Weight;
+                Console.Write("{0} ", edge.Number );
+            }
+            Console.WriteLine();
+            Console.WriteLine("Вес дерева: {0}", sum);
+            Console.ReadLine();
+        }
+
+        static void Prima(int start, int totalNodes)
+        {
+            visited.Add(start);
+            while (mst.Count < totalNodes - 1)  
+            {
+                Rebro minEdge = null;
+
+                foreach (var edge in edges)
+                {
+                    if ((visited.Contains(edge.Start) && !visited.Contains(edge.End)) ||
+                        (visited.Contains(edge.End) && !visited.Contains(edge.Start)))
+                    {
+                        if (minEdge == null || edge.Weight < minEdge.Weight)
+                        {
+                            minEdge = edge;
+                        }
+                    }
+                }
+
+                if (minEdge != null)
+                {
+                    mst.Add(minEdge);
+                    visited.Add(minEdge.Start);
+                    visited.Add(minEdge.End);
+                }
+                else
+                {
+                    break;  
+                }
+            }
+        }
+
+    }
+}
